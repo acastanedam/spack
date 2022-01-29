@@ -16,11 +16,12 @@ class Gpi2(AutotoolsPackage):
 
     homepage = 'http://www.gpi-site.com'
     url      = 'https://github.com/cc-hpc-itwm/GPI-2/archive/refs/tags/v1.5.1.tar.gz'
-    git      = 'https://github.com/cc-hpc-itwm/GPI-2.git'
+    # git      = 'https://github.com/cc-hpc-itwm/GPI-2.git'
+    git = "git@gitlab.com:gaspi_soft/GPI-2.git"
 
     maintainers = ['robert-mijakovic', 'acastanedam', 'mzeyen1985']
 
-    version('develop', branch='next')
+    version('develop', branch='mpcmpi_config')
     version('master', branch='master')
 
     version('1.5.1', sha256='4dac7e9152694d2ec4aefd982a52ecc064a8cb8f2c9eab0425428127c3719e2e')
@@ -140,7 +141,13 @@ class Gpi2(AutotoolsPackage):
         config_args.extend(self.with_or_without('fortran'))
         # Mpi
         if '+mpi' in spec:
-            config_args += ['--with-mpi={0}'.format(spec['mpi'].prefix)]
+            if '^mpcmpi' in spec:
+                environ['CC'] = '{}/mpc_cc'.format(spec['mpi'].prefix.bin)
+                environ['FC'] = '{}/mpc_f77'.format(spec['mpi'].prefix.bin)
+            else:
+                environ['CC'] = '{}/mpicc'.format(spec['mpi'].prefix.bin)
+                environ['FC'] = '{}/mpif90'.format(spec['mpi'].prefix.bin)
+            # config_args += ['--with-mpi={0}'.format(spec['mpi'].prefix)]
         # Fabrics
         if 'fabrics=none' not in spec:
             config_args.extend(self.with_or_without('fabrics'))
