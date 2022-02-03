@@ -147,7 +147,7 @@ class Gpi2(AutotoolsPackage):
             else:
                 environ['CC'] = '{}/mpicc'.format(spec['mpi'].prefix.bin)
                 environ['FC'] = '{}/mpif90'.format(spec['mpi'].prefix.bin)
-            # config_args += ['--with-mpi={0}'.format(spec['mpi'].prefix)]
+            config_args += ['--with-mpi={0}'.format(spec['mpi'].prefix)]
         # Fabrics
         if 'fabrics=none' not in spec:
             config_args.extend(self.with_or_without('fabrics'))
