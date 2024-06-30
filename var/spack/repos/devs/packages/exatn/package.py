@@ -55,6 +55,8 @@ class Exatn(CMakePackage, CudaPackage):
     depends_on("cuda", when="+cuda")
     depends_on("blas")
 
+    conflicts("%gcc@9.1:", msg="gcc>8.5 is not supported")
+
     def cmake_args(self):
         args = [self.define_from_variant("EXATN_BUILD_TESTS", "test")]
 
