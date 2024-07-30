@@ -58,6 +58,12 @@ class Exatn(CMakePackage, CudaPackage):
     conflicts("%gcc@9.1:", msg="gcc>8.5 is not supported")
 
     def cmake_args(self):
+
+        args = []
+        if "%gcc" in self.spec:
+            args.append("-DCMAKE_CXX_FLAGS=-fopenmp")
+            args.append("-DCMAKE_Fortran_FLAGS=-fopenmp -cpp")
+
         args = [self.define_from_variant("EXATN_BUILD_TESTS", "test")]
 
         # Tell numpy which BLAS/LAPACK libraries we want to use.
@@ -79,12 +85,12 @@ class Exatn(CMakePackage, CudaPackage):
         else:
             blas = "blas"
 
-        args.append(self.define("DBLAS_LIB", blas.upper()))
-        args.append("-DBLAS_PATH={0}".format(self.spec["blas"].prefix))
+        args.append(self.define("BLAS_LIB", blas.upper()))
+        args.append("-DBLAS_PATH={0}/lib".format(spec["blas"].prefix))
 
-        args = [self.define_from_variant("DMPI_LIB", "mpi")]
         if "+mpi" in self.spec:
-            args.append("-DMPI_ROOT_DIR={0}".format(self.spec["mpi"].prefix))
+            args.append("-DMPI_LIB={0}".format(spec["mpi"].name.upper()))
+            args.append("-DMPI_ROOT_DIR={0}".format(spec["mpi"].prefix))
 
         if "+cuda" in self.spec:
             args.append(self.define("CUTENSOR", True))
@@ -92,7 +98,7 @@ class Exatn(CMakePackage, CudaPackage):
             cuda_archs = spec.variants["cuda_arch"].value
             if "none" not in cuda_archs:
                 args.append("-DCUDA_NVCC_FLAGS={0}".format(" ".join(self.cuda_flags(cuda_archs))))
-            args.append("-DCUTENSOR_PATH={0}".format(self.spec["cuda"].prefix))
-            args.append("-DCUQUANTUM_PATH={0}".format(self.spec["cuda"].prefix))
+            args.append("-DCUTENSOR_PATH={0}".format(spec["cuda"].prefix))
+            args.append("-DCUQUANTUM_PATH={0}".format(spec["cuda"].prefix))
+        print(f"ARGS:{args}, SPEC:{spec[blas].prefix}")
         return args
-
