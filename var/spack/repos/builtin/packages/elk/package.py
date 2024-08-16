@@ -191,9 +191,9 @@ class Elk(MakefilePackage):
                 ]
             )
             if self.spec.satisfies("@7:"):
-                config["SRC_libxc"] = "libxcf90.f90 libxcifc.f90"
+                config["SRC_LIBXC"] = "libxcf90.f90 libxcifc.f90"
             else:
-                config["SRC_libxc"] = "libxc_funcs.f90 libxc.f90 libxcifc.f90"
+                config["SRC_LIBXC"] = "libxc_funcs.f90 libxc.f90 libxcifc.f90"
 
         # Write configuration options to include file
         with open("make.inc", "w") as inc:
